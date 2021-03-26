@@ -1,0 +1,82 @@
+#!/bin/python3
+
+import math
+import os
+import random
+import re
+import sys
+from collections import Counter
+
+import operator as op
+from functools import reduce
+
+def ncr(n, r):
+    r = min(r, n-r)
+    numer = reduce(op.mul, range(n, n-r, -1), 1)
+    denom = reduce(op.mul, range(1, r+1), 1)
+    return numer / denom
+
+# Complete the countTriplets function below.
+# 테스트 케이스 열라 까다로움. 111111 ~ 있는 경우랑 111111 10 10 10 10 1111 이런식으로 섞이면 progression만 고려해야함
+def countTriplets(arr, r):
+    i=0
+    pre=arr[i]
+    n=len(arr)
+    num=0
+    while(1):
+        if i==n-2:
+            break
+        while(i<=n-2):
+            if arr[i+1]>=arr[i]:
+                i+=1
+            else:
+                break
+        if (i+1)==n:
+
+            d=Counter(arr)
+            keys=d.keys()
+
+            for key in keys:
+                
+                k=int(key)
+
+                if (k in keys) and (r*k in keys) and (r*r*k in keys):
+                    if r==1 and d[k]>=3:
+                        num+=int(ncr(d[k],3))
+                    else:
+                        num+=d[k]*d[r*k]*d[r*r*k]
+            break
+        else:
+            d=Counter(arr[:i+1])
+            keys=d.keys()
+
+            for key in keys:
+                
+                k=int(key)
+
+                if (k in keys) and (r*k in keys) and (r*r*k in keys):
+                    if r==1 and d[k]>=3:
+                        num+=int(ncr(d[k],3))
+                    else:
+                        num+=d[k]*d[r*k]*d[r*r*k]
+        i+=1
+        
+    return num
+
+
+if __name__ == '__main__':
+    fptr = open(os.environ['OUTPUT_PATH'], 'w')
+
+    nr = input().rstrip().split()
+
+    n = int(nr[0])
+
+    r = int(nr[1])
+
+    arr = list(map(int, input().rstrip().split()))
+
+    ans = countTriplets(arr, r)
+
+    fptr.write(str(ans) + '\n')
+
+    fptr.close()
